@@ -15,7 +15,7 @@
     display: flex;
     flex-wrap: wrap;
 }
-.priceSpeedFilter_item {
+.priceSpeedFilter__item {
     font-family: OpenSans;
     font-weight: 600;
     font-size: 12px;
@@ -35,9 +35,18 @@
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
     }
+    &:hover {
+        cursor: pointer;
+        background-color: #2196f3;
+        color: #fff;
+    }
+}
+.priceSpeedFilter_active {
+    background-color: #2196f3;
+    color: #fff;
 }
 
-.ticketsList_item {
+.ticketsList__item {
     max-width: 502px;
     min-width: 270px;
     height: 184px;
@@ -48,18 +57,22 @@
     padding: 20px;
     box-sizing: border-box;
 }
-.ticketsCard_header {
+.ticketsCard__header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
-.ticketsCard_price {
+.ticketsCard__price {
     font-weight: 600;
     font-size: 24px;
     letter-spacing: 0px;
     color: #2196f3;
 }
-.ticketsCard_info {
+.ticketsCard__image {
+    width: 99px;
+    height: 50px;
+}
+.ticketsCard__info {
     margin-bottom: 20px;
     display: flex;
     gap: 20px;
@@ -69,7 +82,7 @@
     font-weight: 400;
     letter-spacing: 1px;
 }
-.ticketsCard_date {
+.ticketsCard__date {
     display: flex;
     flex-direction: column;
 }
@@ -82,7 +95,7 @@
     border-radius: 5px;
     box-shadow: 0 0 15px 0 rgb(189, 189, 189);
 }
-.transfersFilter_title {
+.transfersFilter__title {
     text-transform: uppercase;
     color: #4a4a4a;
     font-size: 12px;
@@ -90,7 +103,7 @@
     letter-spacing: 0.5px;
     padding: 20px 20px 10px;
 }
-.transfersFilter_item {
+.transfersFilter__item {
     display: flex;
     cursor: pointer;
     padding: 10px 70px 10px 20px;
@@ -101,10 +114,10 @@
         background-color: #f1fcff;
     }
 }
-.transfersFilter_label {
+.transfersFilter__label {
     color: #4a4a4a;
 }
-.transfersFilter_input {
+.transfersFilter__input {
     margin-right: 10px;
 }
 .showTicketsButton {
