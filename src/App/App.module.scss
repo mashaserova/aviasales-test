@@ -9,6 +9,9 @@
     gap: 20px;
     margin: 0 auto;
     justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .priceSpeedFilter {
@@ -70,7 +73,7 @@
 }
 .ticketsCard__image {
     width: 99px;
-    height: 50px;
+    height: 36px;
 }
 .ticketsCard__info {
     margin-bottom: 20px;
@@ -139,4 +142,22 @@
         transition: 0.3s;
         background-color: #1764a3;
     }
+}
+.antdContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    max-width: 100%;
+}
+.alertContainer {
+    display: block;
+    max-width: 100%;
+    margin: 0 auto;
+}
+.spinnerContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
 }

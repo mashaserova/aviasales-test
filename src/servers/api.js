@@ -1,3 +1,5 @@
+import { setError } from '../store/slices/errorSlice';
+
 //https://front-test.dev.aviasales.ru/search
 const baseAviasalesUrl = 'https://aviasales-test-api.kata.academy/';
 export const getSearchId = async () => {
@@ -21,25 +23,29 @@ export const fetchTickets = async (searchId) => {
         const response = await fetch(
             `${baseAviasalesUrl}tickets?searchId=${searchId}`
         );
-        if (!response.ok) {
-            throw new Error(
-                `Error while requesting for tickets: ${response.status}`
-            );
+        if (response.status === 500) {
+            console.error('Сервер вернул 500 ошибку. Повторите попытку позже.');
+            return { tickets: [], stop: true, error: 'Ошибка сервера' };
+        } else if (!response.ok) {
+            return { tickets: [], stop: true, error: response.status };
         }
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error: ', error);
         return { tickets: [], stop: true };
     }
 };
-export const getAllTickets = async (searchId) => {
+export const getAllTickets = async (dispatch, searchId) => {
     let allTickets = [];
     let stop = false;
     while (!stop) {
-        const data = await fetchTickets(searchId);
-        allTickets = [...allTickets, ...data.tickets];
-        stop = data.stop;
+        try {
+            const data = await fetchTickets(searchId);
+            allTickets = [...allTickets, ...data.tickets];
+            stop = data.stop;
+        } catch (error) {
+            dispatch(setError(error.message));
+        }
     }
     return allTickets;
 };
