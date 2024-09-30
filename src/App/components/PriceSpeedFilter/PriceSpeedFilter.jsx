@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from '../../App.module.scss';
+import styles from './PriceSpeedFilter.module.scss';
 import CardTicket from '../CardTicket/CardTicket';
 
 export const PriceSpeedFilter = ({

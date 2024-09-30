@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../App.module.scss';
+import styles from './TransfersFilters.module.scss';
 
 export const TransfersFilter = ({
     filters,

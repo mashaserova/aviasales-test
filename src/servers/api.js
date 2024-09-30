@@ -24,7 +24,6 @@ export const fetchTickets = async (searchId) => {
             `${baseAviasalesUrl}tickets?searchId=${searchId}`
         );
         if (response.status === 500) {
-            console.error('Сервер вернул 500 ошибку. Повторите попытку позже.');
             return { tickets: [], stop: true, error: 'Ошибка сервера' };
         } else if (!response.ok) {
             return { tickets: [], stop: true, error: response.status };

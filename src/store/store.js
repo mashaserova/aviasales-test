@@ -9,4 +9,8 @@ export const store = configureStore({
         tickets: ticketReducer,
         error: errorReducer,
     },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: false, // Отключаем middleware
+        }),
 });

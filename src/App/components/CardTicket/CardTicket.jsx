@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../App.module.scss';
+import styles from './CardTicket.module.scss';
 import planeLogo from '../../../assets/images/plane-logo.svg';
 import { v4 as uuidv4 } from 'uuid';
 const CardTicket = ({ ticket }) => {
