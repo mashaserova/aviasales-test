@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { clearError, setError } from '../store/slices/errorSlice';
 import styles from './App.module.scss';
 import logo from '../assets/images/plane-logo.svg';
-import { store } from '../store/store';
 import { Spin, Alert } from 'antd';
 import {
     toggleAll,
@@ -10,15 +9,15 @@ import {
     setSortBy,
 } from '../store/slices/filterSlice';
 import { fetchAllTickets, setIsLoading } from '../store/slices/ticketSlice';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { TransfersFilter } from './components/TransfersFilter/TransfersFilters';
 import { PriceSpeedFilter } from './components/PriceSpeedFilter/PriceSpeedFilter';
+import { filterTicketsByTransfers, sortTickets } from '../utils/ticketUtils';
 const App = () => {
     const dispatch = useDispatch();
     const errorMessage = useSelector((state) => state.error.message);
     const filters = useSelector((state) => state.filters);
     const { tickets, isLoading } = useSelector((state) => state.tickets);
-    const [displayedTickets, setDisplayedTickets] = useState([]);
     const [ticketsToShow, setTicketsToShow] = useState(5);
     useEffect(() => {
         dispatch(fetchAllTickets());
@@ -37,47 +36,10 @@ const App = () => {
         };
         fetchData();
     }, [dispatch]);
-    useEffect(() => {
-        const filteredTickets = tickets.filter((ticket) => {
-            const stops = ticket.segments.reduce((accumulator, segment) => {
-                return accumulator + segment.stops.length;
-            }, 0);
-            if (filters.all) return true;
-            if (filters.none && stops === 0) return true;
-            if (filters.one && stops === 1) return true;
-            if (filters.two && stops === 2) return true;
-            if (filters.three && stops === 3) return true;
-            return false;
-        });
-        const sortedTickets = [...filteredTickets].sort((a, b) => {
-            if (filters.sortBy === 'cheapest') {
-                return a.price - b.price;
-            } else if (filters.sortBy === 'fastest') {
-                const durationA = a.segments.reduce(
-                    (acc, segment) => acc + segment.duration,
-                    0
-                );
-                const durationB = b.segments.reduce(
-                    (acc, segment) => acc + segment.duration,
-                    0
-                );
-                return durationA - durationB;
-            } else if (filters.sortBy === 'optimal') {
-                const durationA = a.segments.reduce(
-                    (acc, segment) => acc + segment.duration,
-                    0
-                );
-                const durationB = a.segments.reduce(
-                    (acc, segment) => acc + segment.duration,
-                    0
-                );
-                const optimalA = a.price + durationA;
-                const optimalB = b.prive + durationB;
-                return optimalA - optimalB;
-            }
-            return 0;
-        });
-        setDisplayedTickets(sortedTickets.slice(0, ticketsToShow));
+    const displayedTickets = useMemo(() => {
+        const filteredTickets = filterTicketsByTransfers(tickets, filters);
+        const sortedTickets = sortTickets(filteredTickets, filters.sortBy);
+        return sortedTickets.slice(0, ticketsToShow);
     }, [tickets, filters, ticketsToShow]);
     const handleFilterChange = (filterName) => {
         dispatch(toggleFilter(filterName));
@@ -114,28 +76,19 @@ const App = () => {
                 )}
             </div>
             <div className={styles.container}>
-                {!isLoading && (
-                    <>
-                        <TransfersFilter
-                            filters={filters}
-                            handleAllChange={handleAllChange}
-                            handleFilterChange={handleFilterChange}
-                        />
-                        <PriceSpeedFilter
-                            handleSortByChange={handleSortByChange}
-                            displayedTickets={displayedTickets}
-                            handleShowMoreTickets={handleShowMoreTickets}
-                        />
-                    </>
-                )}
+                <>
+                    <TransfersFilter
+                        handleAllChange={handleAllChange}
+                        handleFilterChange={handleFilterChange}
+                    />
+                    <PriceSpeedFilter
+                        handleSortByChange={handleSortByChange}
+                        displayedTickets={displayedTickets}
+                        handleShowMoreTickets={handleShowMoreTickets}
+                    />
+                </>
             </div>
         </>
     );
 };
-
-const WrappedApp = () => (
-    <Provider store={store}>
-        <App />
-    </Provider>
-);
-export default WrappedApp;
+export default App;

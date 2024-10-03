@@ -1,6 +1,3 @@
-import { setError } from '../store/slices/errorSlice';
-
-//https://front-test.dev.aviasales.ru/search
 const baseAviasalesUrl = 'https://aviasales-test-api.kata.academy/';
 export const getSearchId = async () => {
     try {
@@ -13,7 +10,6 @@ export const getSearchId = async () => {
         const data = await response.json();
         return data.searchId;
     } catch (error) {
-        console.error(`Error:`, error);
         return null;
     }
 };
@@ -23,28 +19,17 @@ export const fetchTickets = async (searchId) => {
         const response = await fetch(
             `${baseAviasalesUrl}tickets?searchId=${searchId}`
         );
-        if (response.status === 500) {
-            return { tickets: [], stop: true, error: 'Ошибка сервера' };
-        } else if (!response.ok) {
-            return { tickets: [], stop: true, error: response.status };
+        if (!response.ok) {
+            if (response.status === 500) {
+                return { error: 'Ошибка сервера' };
+            } else {
+                const errorText = `Ошибка запроса: ${response.status} ${response.statusText}`;
+                return { error: errorText };
+            }
         }
         const data = await response.json();
         return data;
     } catch (error) {
-        return { tickets: [], stop: true };
+        return { error: error.message };
     }
-};
-export const getAllTickets = async (dispatch, searchId) => {
-    let allTickets = [];
-    let stop = false;
-    while (!stop) {
-        try {
-            const data = await fetchTickets(searchId);
-            allTickets = [...allTickets, ...data.tickets];
-            stop = data.stop;
-        } catch (error) {
-            dispatch(setError(error.message));
-        }
-    }
-    return allTickets;
 };

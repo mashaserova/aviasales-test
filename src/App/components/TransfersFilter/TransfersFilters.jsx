@@ -1,11 +1,9 @@
 import React from 'react';
 import styles from './TransfersFilters.module.scss';
+import { useSelector } from 'react-redux';
 
-export const TransfersFilter = ({
-    filters,
-    handleAllChange,
-    handleFilterChange,
-}) => {
+export const TransfersFilter = ({ handleAllChange, handleFilterChange }) => {
+    const filters = useSelector((state) => state.filters);
     return (
         <aside>
             <div className={styles.transfersFilter}>

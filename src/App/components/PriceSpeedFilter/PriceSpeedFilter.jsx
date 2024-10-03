@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './PriceSpeedFilter.module.scss';
-import CardTicket from '../CardTicket/CardTicket';
+import TicketList from '../TicketList/TicketList';
 
 export const PriceSpeedFilter = ({
     handleSortByChange,
@@ -39,11 +39,7 @@ export const PriceSpeedFilter = ({
                     Оптимальный
                 </button>
             </div>
-            <div className={styles.ticketsList}>
-                {displayedTickets.map((ticket) => (
-                    <CardTicket key={ticket.id} ticket={ticket} />
-                ))}
-            </div>
+            <TicketList tickets={displayedTickets} />
             <button
                 className={styles.showTicketsButton}
                 onClick={handleShowMoreTickets}
