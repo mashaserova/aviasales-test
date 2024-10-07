@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { getSearchId, fetchTickets } from '../../servers/api';
-import { v4 as idGenerator } from 'uuid';
 import { clearError, setError } from './errorSlice';
 
 const initialState = {
@@ -15,28 +14,14 @@ const ticketSlice = createSlice({
     initialState,
     reducers: {
         setTickets: (state, action) => {
-            const ticketsWithIds = action.payload.tickets.map((ticket) => ({
-                ...ticket,
-                id: `${ticket.segments[0].date}${ticket.segments[1].date}`,
-            }));
-            state.tickets = [...state.tickets, ...ticketsWithIds];
+            state.tickets = action.payload.tickets;
             state.searchId = action.payload.searchId;
         },
         setIsLoading: (state, action) => {
             state.isLoading = action.payload;
         },
-        setError: (state, action) => {
-            state.error = action.payload;
-        },
-        clearError: (state) => {
-            state.error = null;
-        },
         addTickets: (state, action) => {
-            const ticketsWithIds = action.payload.map((ticket) => ({
-                ...ticket,
-                id: idGenerator(),
-            }));
-            state.tickets = state.tickets.concat(ticketsWithIds);
+            state.tickets = state.tickets.concat(action.payload);
         },
     },
 });
@@ -90,7 +75,7 @@ export const fetchAllTickets = () => async (dispatch, getState) => {
         dispatch(setError(error.message));
     } finally {
         dispatch(setIsLoading(false));
-        if (!getState().tickets.error) {
+        if (!getState().error.message) {
             dispatch(clearError());
         }
     }

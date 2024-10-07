@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import styles from './PriceSpeedFilter.module.scss';
-import TicketList from '../TicketList/TicketList';
 
-export const PriceSpeedFilter = ({
-    handleSortByChange,
-    displayedTickets,
-    handleShowMoreTickets,
-}) => {
+export const PriceSpeedFilter = ({ handleSortByChange }) => {
     const [activeSort, setActiveSort] = useState(null);
     return (
         <main>
@@ -39,13 +34,6 @@ export const PriceSpeedFilter = ({
                     Оптимальный
                 </button>
             </div>
-            <TicketList tickets={displayedTickets} />
-            <button
-                className={styles.showTicketsButton}
-                onClick={handleShowMoreTickets}
-            >
-                Показать еще 5 билетов!
-            </button>
         </main>
     );
 };

@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { clearError, setError } from '../store/slices/errorSlice';
+import { clearError } from '../store/slices/errorSlice';
 import styles from './App.module.scss';
 import logo from '../assets/images/plane-logo.svg';
 import { Spin, Alert } from 'antd';
+import TicketList from './components/TicketList/TicketList';
 import {
     toggleAll,
     toggleFilter,
     setSortBy,
 } from '../store/slices/filterSlice';
-import { fetchAllTickets, setIsLoading } from '../store/slices/ticketSlice';
+import { fetchAllTickets } from '../store/slices/ticketSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { TransfersFilter } from './components/TransfersFilter/TransfersFilters';
 import { PriceSpeedFilter } from './components/PriceSpeedFilter/PriceSpeedFilter';
@@ -20,17 +21,7 @@ const App = () => {
     const { tickets, isLoading } = useSelector((state) => state.tickets);
     const [ticketsToShow, setTicketsToShow] = useState(5);
     useEffect(() => {
-        const fetchData = async () => {
-            dispatch(setIsLoading(true));
-            try {
-                await dispatch(fetchAllTickets());
-            } catch (error) {
-                dispatch(setError(error.message));
-            } finally {
-                dispatch(setIsLoading(false));
-            }
-        };
-        fetchData();
+        dispatch(fetchAllTickets());
     }, []);
     const displayedTickets = useMemo(() => {
         const filteredTickets = filterTicketsByTransfers(tickets, filters);
@@ -78,11 +69,19 @@ const App = () => {
                         handleAllChange={handleAllChange}
                         handleFilterChange={handleFilterChange}
                     />
-                    <PriceSpeedFilter
-                        handleSortByChange={handleSortByChange}
-                        displayedTickets={displayedTickets}
-                        handleShowMoreTickets={handleShowMoreTickets}
-                    />
+                    <main className={styles.mainContainer}>
+                        <PriceSpeedFilter
+                            handleSortByChange={handleSortByChange}
+                            handleShowMoreTickets={handleShowMoreTickets}
+                        />
+                        <TicketList tickets={displayedTickets} />
+                        <button
+                            className={styles.showTicketsButton}
+                            onClick={handleShowMoreTickets}
+                        >
+                            Показать еще 5 билетов!
+                        </button>
+                    </main>
                 </>
             </div>
         </>

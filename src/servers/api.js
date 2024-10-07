@@ -21,7 +21,7 @@ export const fetchTickets = async (searchId) => {
         );
         if (!response.ok) {
             if (response.status === 404) {
-                return { error: 'Ресурс не найден.' };
+                return { error: 'Ресурс не найден. Попробуйте позже.' };
             } else if (response.status === 429) {
                 return { error: 'Слишком много запросов. Попробуйте позже.' };
             } else if (response.status >= 500 && response.status < 600) {
