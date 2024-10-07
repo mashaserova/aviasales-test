@@ -46,8 +46,6 @@ export const { setTickets, setIsLoading, addTickets } = ticketSlice.actions;
 export const fetchAllTickets = () => async (dispatch, getState) => {
     try {
         dispatch(setIsLoading(true));
-        dispatch(clearError());
-
         let searchId = getState().tickets.searchId;
         if (!searchId) {
             searchId = await getSearchId();
@@ -56,32 +54,35 @@ export const fetchAllTickets = () => async (dispatch, getState) => {
                 return;
             }
         }
+
         let stop = false;
         while (!stop) {
             try {
                 const data = await fetchTickets(searchId);
                 if (data.error) {
+                    dispatch(setError(data.error));
                     if (data.error === 'Ошибка сервера') {
                         dispatch(
                             setError(
-                                'Ошибка на сервере, уже делаем повторный запрос'
+                                'Произошла ошибка на сервере, уже делаем повторный запрос'
                             )
                         );
-                        setTimeout(() => {
-                            dispatch(fetchAllTickets());
-                        }, 5000);
-                        return;
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 5000)
+                        );
+                        continue;
                     } else {
                         dispatch(setError(data.error));
+                        stop = true;
                         return;
                     }
-                } else {
-                    dispatch(addTickets(data.tickets));
-                    dispatch(setIsLoading(false));
-                    stop = data.stop;
+                }
+                dispatch(addTickets(data.tickets));
+                if (data.stop) {
+                    stop = true;
                 }
             } catch (error) {
-                dispatch(setError('Ошибка сервера'));
+                dispatch(setError('Ошибка запроса сервера'));
                 return;
             }
         }
@@ -89,6 +90,9 @@ export const fetchAllTickets = () => async (dispatch, getState) => {
         dispatch(setError(error.message));
     } finally {
         dispatch(setIsLoading(false));
+        if (!getState().tickets.error) {
+            dispatch(clearError());
+        }
     }
 };
 

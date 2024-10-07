@@ -20,14 +20,10 @@ const App = () => {
     const { tickets, isLoading } = useSelector((state) => state.tickets);
     const [ticketsToShow, setTicketsToShow] = useState(5);
     useEffect(() => {
-        dispatch(fetchAllTickets());
-    }, []);
-    useEffect(() => {
         const fetchData = async () => {
             dispatch(setIsLoading(true));
             try {
                 await dispatch(fetchAllTickets());
-                dispatch(clearError());
             } catch (error) {
                 dispatch(setError(error.message));
             } finally {
@@ -35,7 +31,7 @@ const App = () => {
             }
         };
         fetchData();
-    }, [dispatch]);
+    }, []);
     const displayedTickets = useMemo(() => {
         const filteredTickets = filterTicketsByTransfers(tickets, filters);
         const sortedTickets = sortTickets(filteredTickets, filters.sortBy);
@@ -71,6 +67,7 @@ const App = () => {
                 )}
                 {isLoading && (
                     <div className={styles.spinnerContainer}>
+                        Загружаем билеты...
                         <Spin size="large" />
                     </div>
                 )}

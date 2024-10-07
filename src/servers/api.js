@@ -20,16 +20,23 @@ export const fetchTickets = async (searchId) => {
             `${baseAviasalesUrl}tickets?searchId=${searchId}`
         );
         if (!response.ok) {
-            if (response.status === 500) {
+            if (response.status === 404) {
+                return { error: 'Ресурс не найден.' };
+            } else if (response.status === 429) {
+                return { error: 'Слишком много запросов. Попробуйте позже.' };
+            } else if (response.status >= 500 && response.status < 600) {
                 return { error: 'Ошибка сервера' };
-            } else {
-                const errorText = `Ошибка запроса: ${response.status} ${response.statusText}`;
-                return { error: errorText };
             }
         }
         const data = await response.json();
         return data;
     } catch (error) {
+        if (
+            error instanceof TypeError &&
+            error.message.includes('NetworkError')
+        ) {
+            return { error: error.message };
+        }
         return { error: error.message };
     }
 };
